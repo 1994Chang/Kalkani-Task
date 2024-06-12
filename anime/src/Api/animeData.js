@@ -4,22 +4,40 @@ import axios from "axios";
 // const apiKey = process.env.REACT_APP_API_KEY;
 // const apiUrl = process.env.REACT_APP_API_URL;
 // console.log(apiKey,"apikey")
- export const getInitialData = async() =>{
-        try {
-            const res = await axios(`https://api.jikan.moe/v4/characters?page=1&limit=15&q=&order_by=favorites&sort=desc`);
-            return res;
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
+const generateApiUrl = ({ page, limit, query, orderBy, sort }) => {
+    return `https://api.jikan.moe/v4/characters?page=${page}&limit=${limit}&q=${query}&order_by=${orderBy}&sort=${sort}`;
+  };
 
-    export const fetchNewData = async(searchTerm) =>{
-        console.log(searchTerm,"searchterm")
-        try {
-            const res = await axios(`https://api.jikan.moe/v4/characters?page=1&limit=15&q=${searchTerm}&order_by=favorites&sort=desc`);
-            return res;
-        } catch (error) {
-            console.log(error);
-        }
+export const getInitialData = async () => {
+  try {
+    const url = generateApiUrl({
+      page: 1,
+      limit: 15,
+      query: '',
+      orderBy: 'favorites',
+      sort: 'desc',
+    });
+    const res = await axios(url);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchNewData = async (searchTerm, options = {}) => {
+    try {
+      const { page = 1, limit = 15, orderBy = 'favorites', sort = 'desc' } = options;
+      const url = generateApiUrl({
+        page,
+        limit,
+        query: searchTerm,
+        orderBy,
+        sort,
+      });
+      const res = await axios(url);
+      return res;
+    } catch (error) {
+      console.log(error);
     }
+  };

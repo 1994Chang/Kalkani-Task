@@ -1,11 +1,12 @@
-import { Typography, Grid, Card, CardContent, Box } from '@mui/material';
+import { Typography, Grid, Card, CardContent, Box, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../Component/searchBar';
 import { fetchNewData, getInitialData } from '../Api/animeData';
 import AnimeCard from '../Component/animeCard';
 import { toast } from 'react-toastify';
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 
 const BackgroundContainer = styled('div')({
@@ -40,7 +41,9 @@ const BackgroundContainer = styled('div')({
 
 const Dashboard = () => {
   const [cardData, setCardData] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  
   const fetchInitialData = async () => {
     const animeRes = await getInitialData();
     console.log(animeRes, "response");
@@ -53,18 +56,47 @@ const Dashboard = () => {
   }
 
 
-  const handleSearchChange = async(newSearchTerm) => {
+  const handleSearchChange = async (newSearchTerm) => {
+    setSearchTerm(newSearchTerm);
     if (newSearchTerm.trim() !== '') {
-        try {
-            const response = await fetchNewData(newSearchTerm);
-            setCardData(response.data);
-            toast.success('Successfully fetch data');
-            console.log(response.data,"using search");
-        } catch (error) {
-            toast.error('Error fetching data:', error);
-        }
+      try {
+        const response = await fetchNewData(newSearchTerm);
+        setCardData(response.data);
+        setCurrentPage(1); 
+        toast.success('Successfully fetch data');
+        console.log(response.data, "using search");
+      } catch (error) {
+        toast.error('Error fetching data:', error);
+      }
     }
-          
+  };
+  
+  const handleBackClick = async () => {
+    if (currentPage > 1) {
+      const newPage = currentPage - 1;
+      try {
+        const response = await fetchNewData(searchTerm, { page: newPage });
+        setCardData(response.data);
+        setCurrentPage(newPage);
+        toast.success('Successfully fetch data');
+      } catch (error) {
+        toast.error('Error fetching data:', error);
+      }
+    } else {
+      toast.info('You are on the first page.');
+    }
+  };
+  
+  const handleForwardClick = async () => {
+    const newPage = currentPage + 1;
+    try {
+      const response = await fetchNewData(searchTerm, { page: newPage });
+      setCardData(response.data);
+      setCurrentPage(newPage);
+      toast.success('Successfully fetch data');
+    } catch (error) {
+      toast.error('Error fetching data:', error);
+    }
   };
 
   useEffect(() => {
@@ -86,7 +118,18 @@ const Dashboard = () => {
         <Grid container spacing={3} style={{ padding: '20px' }}>
           <Grid item xs={12}>
             {cardData ?
-              <AnimeCard data={cardData} />
+            <>
+                <AnimeCard data={cardData} />
+                <Grid container item xs={12} spacing={2} sx={{display: 'flex', justifyContent: 'center', marginTop:'20px'}}>
+                    <IconButton>
+                        <ArrowBackIosIcon onClick={handleBackClick}/>
+                    </IconButton>
+                    <IconButton>
+                        <ArrowForwardIosIcon onClick={handleForwardClick}/>
+                    </IconButton>
+                </Grid>
+            </>
+              
               :
               <Typography variant="h4" gutterBottom color="black" textAlign={"center"}>
                 No Anime Character found...
