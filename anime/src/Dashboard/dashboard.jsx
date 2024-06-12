@@ -14,7 +14,7 @@ const BackgroundContainer = styled('div')({
   top: 0, 
   left: 0, 
   width: '100%',
-  height: '35vh',
+  height: '30vh',
   backgroundImage: 'url(https://www.bhmpics.com/downloads/cool-anime-character-Wallpapers/14.kkeu2a.jpg)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -64,10 +64,11 @@ const Dashboard = () => {
         setCardData(response.data);
         setCurrentPage(1); 
         toast.success('Successfully fetch data');
-        console.log(response.data, "using search");
       } catch (error) {
         toast.error('Error fetching data:', error);
       }
+    }else{
+        fetchInitialData();
     }
   };
   
@@ -88,19 +89,25 @@ const Dashboard = () => {
   };
   
   const handleForwardClick = async () => {
-    const newPage = currentPage + 1;
-    try {
-      const response = await fetchNewData(searchTerm, { page: newPage });
-      setCardData(response.data);
-      setCurrentPage(newPage);
-      toast.success('Successfully fetch data');
-    } catch (error) {
-      toast.error('Error fetching data:', error);
-    }
+    if (currentPage < cardData.pagination.last_visible_page) {
+        const newPage = currentPage + 1;
+        try {
+            const response = await fetchNewData(searchTerm, { page: newPage });
+            setCardData(response.data);
+            setCurrentPage(newPage);
+            toast.success('Successfully fetch data');
+        } catch (error) {
+            toast.error('Error fetching data:', error);
+        }
+    }else {
+        toast.info('You are on the last page.');
+      }
   };
 
   useEffect(() => {
-    fetchInitialData();
+    if(searchTerm === ""){
+        fetchInitialData();
+    }
   }, []);
 
   return (
@@ -114,7 +121,7 @@ const Dashboard = () => {
           Total {cardData ? cardData?.pagination?.items?.total : 0} Matching Anime Character Found
         </Typography>
       </BackgroundContainer>
-      <Box style={{ marginTop: '35vh', overflowY: 'auto', height: '65vh' }}> {/* Add scrollable container */}
+      <Box style={{ marginTop: '35vh', overflowY: 'auto' }}> 
         <Grid container spacing={3} style={{ padding: '20px' }}>
           <Grid item xs={12}>
             {cardData ?
@@ -122,15 +129,14 @@ const Dashboard = () => {
                 <AnimeCard data={cardData} />
                 <Grid container item xs={12} spacing={2} sx={{display: 'flex', justifyContent: 'center', marginTop:'20px'}}>
                     <IconButton>
-                        <ArrowBackIosIcon onClick={handleBackClick}/>
+                        <ArrowBackIosIcon onClick={()=>handleBackClick()}/>
                     </IconButton>
                     <IconButton>
-                        <ArrowForwardIosIcon onClick={handleForwardClick}/>
+                        <ArrowForwardIosIcon onClick={()=>handleForwardClick()}/>
                     </IconButton>
                 </Grid>
             </>
-              
-              :
+            :
               <Typography variant="h4" gutterBottom color="black" textAlign={"center"}>
                 No Anime Character found...
               </Typography>

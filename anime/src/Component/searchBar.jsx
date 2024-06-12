@@ -44,15 +44,6 @@ const SearchBar = ({ onSearchChange }) => {
         onSearchChange(searchQuery);
     };
 
-//     if (searchQuery.trim() !== '') {
-//       try {
-//         const response = await axios.get(`https://api.jikan.moe/v4/characters?page=1&limit=15&q=${searchQuery}&order_by=favorites&sort=desc`);
-//         console.log(response.data,"using search");
-//       } catch (error) {
-//         console.error('Error fetching data:', error);
-//       }
-//     }
-  
 
   return (
     <Grid container justifyContent="center">

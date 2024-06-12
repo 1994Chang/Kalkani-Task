@@ -1,10 +1,5 @@
 import axios from "axios";
 
-
-// const apiKey = process.env.REACT_APP_API_KEY;
-// const apiUrl = process.env.REACT_APP_API_URL;
-// console.log(apiKey,"apikey")
-
 const generateApiUrl = ({ page, limit, query, orderBy, sort }) => {
     return `https://api.jikan.moe/v4/characters?page=${page}&limit=${limit}&q=${query}&order_by=${orderBy}&sort=${sort}`;
   };
