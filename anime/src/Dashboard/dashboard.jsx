@@ -55,7 +55,6 @@ const Dashboard = () => {
     }
   }
 
-
   const handleSearchChange = async (newSearchTerm) => {
     setSearchTerm(newSearchTerm);
     if (newSearchTerm.trim() !== '') {
@@ -124,7 +123,7 @@ const Dashboard = () => {
       <Box style={{ marginTop: '35vh', overflowY: 'auto' }}> 
         <Grid container spacing={3} style={{ padding: '20px' }}>
           <Grid item xs={12}>
-            {cardData ?
+            {cardData?.data.length > 0 ?
             <>
                 <AnimeCard data={cardData} />
                 <Grid container item xs={12} spacing={2} sx={{display: 'flex', justifyContent: 'center', marginTop:'20px'}}>
